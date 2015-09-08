@@ -66,6 +66,16 @@ TODO
 
 ### Running tests
 
-Using [mocha](https://mochajs.org/) to run tests.
+[mocha](https://mochajs.org/) is used for testing.
 
-Run `npm test`. Your default browser should open a few tabs to run the tests.
+Start by creating a file `options.json` in `tests/` that looks like:
+
+```json
+{
+  "shop": "YourDevShop.myshopify.com",
+  "appKey": "your app key",
+  "appSecret": "your app secret",
+}
+```
+
+Run `npm test`. Your default browser should open a few tabs to run the tests using the provided dev shop.
