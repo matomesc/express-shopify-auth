@@ -1,15 +1,44 @@
 {
   "name": "express-shopify-auth",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "test": "./node_modules/.bin/mocha -R spec -t 3600000 tests/*"
+  "version": "0.0.1",
+  "description": "Easily authenticate express applications with Shopify.",
+  "main": "index.js",
+  "private": false,
+  "directories": {
+    "test": "tests"
   },
   "dependencies": {
     "express": "^4.13.3",
-    "lru-cache": "^2.6.5",
-    "mocha": "^2.3.1",
     "request": "^2.61.0",
-    "sinon": "^1.16.1"
-  }
+    "lru-cache": "2.6.5",
+    "sinon": "1.16.1",
+    "mocha": "2.3.1"
+  },
+  "scripts": {
+    "test": "mocha -R spec -t 3600000 tests/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matomesc/express-shopify-auth.git"
+  },
+  "keywords": [
+    "express",
+    "shopify",
+    "authentication",
+    "auth",
+    "oauth",
+    "shopify.com",
+    "myshopify.com",
+    "shopify embedded app",
+    "shopify app",
+    "shopify api",
+    "shopify rest api",
+    "shopify rest"
+  ],
+  "author": "Mihai Tomescu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matomesc/express-shopify-auth/issues"
+  },
+  "homepage": "https://github.com/matomesc/express-shopify-auth#readme"
 }
