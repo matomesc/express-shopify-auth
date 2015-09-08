@@ -128,7 +128,8 @@ ShopifyAuth.exchangeCodeForToken = function (options, cb) {
  * @param {String}          options.authFailUrl         User is redirected here if authentication fails.
  * @param {Function}        [options.onPermission]      Called with `(shop, redirectUrl, done)` before redirecting to
  *                                                      Shopify to ask for permissions.
- * @param {Function}        options.onAuth              Called with `(shop, accessToken, done)` once authentication is
+ * @param {Function}        options.onAuth              Called with `(req, shop, accessToken, done)` once
+ *                                                      authentication is
  *                                                      done, but before redirecting to `authSuccessUrl`.
  * @param {Function}        [options.onError]           Called with `(err, req, res, next)`.
  */
@@ -230,7 +231,7 @@ ShopifyAuth.create = function (options) {
         if (err) {
           return onError(shopErr, req, res, next);
         }
-        return middleware.onAuth(params.shop, accessToken, function () {
+        return middleware.onAuth(req, params.shop, accessToken, function () {
           return res.redirect(options.authSuccessUrl);
         });
       });

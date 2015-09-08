@@ -71,7 +71,7 @@ describe('ShopifyAuth.create() middleware', function () {
     options.onPermission.callsArg(2);
 
     options.onAuth = sinon.stub();
-    options.onAuth.callsArg(2);
+    options.onAuth.callsArg(3);
 
     var auth = ShopifyAuth.create(options);
     var onErrorSpy = sinon.spy(auth, 'onError');
@@ -100,7 +100,7 @@ describe('ShopifyAuth.create() middleware', function () {
     options.onPermission.callsArg(2);
 
     options.onAuth = sinon.stub();
-    options.onAuth.callsArg(2);
+    options.onAuth.callsArg(3);
 
     options.onError = sinon.stub();
 
@@ -118,9 +118,9 @@ describe('ShopifyAuth.create() middleware', function () {
       assert(typeof options.onPermission.args[0][2] === 'function');
 
       assert(options.onAuth.calledOnce);
-      assert(options.onAuth.args[0][0] === testOptions.shop);
-      assert(typeof options.onAuth.args[0][1] === 'string');
-      assert(typeof options.onAuth.args[0][2] === 'function');
+      assert(options.onAuth.args[0][1] === testOptions.shop);
+      assert(typeof options.onAuth.args[0][2] === 'string');
+      assert(typeof options.onAuth.args[0][3] === 'function');
 
       setTimeout(done, 500);
     });
@@ -132,7 +132,7 @@ describe('ShopifyAuth.create() middleware', function () {
     var options = defaultOptions();
     var data;
 
-    options.onAuth = function (shop, accessToken, done_) {
+    options.onAuth = function (req, shop, accessToken, done_) {
       var opts = {
         method: 'GET',
         url: 'https://' + shop + '/admin/shop.json',
