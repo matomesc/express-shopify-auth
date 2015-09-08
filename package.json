@@ -1,0 +1,15 @@
+{
+  "name": "express-shopify-auth",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -R spec -t 3600000 tests/*"
+  },
+  "dependencies": {
+    "express": "^4.13.3",
+    "lru-cache": "^2.6.5",
+    "mocha": "^2.3.1",
+    "request": "^2.61.0",
+    "sinon": "^1.16.1"
+  }
+}
