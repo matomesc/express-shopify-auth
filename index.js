@@ -229,9 +229,12 @@ ShopifyAuth.create = function (options) {
       };
       self.exchangeCodeForToken(exchangeOptions, function (err, accessToken) {
         if (err) {
-          return onError(shopErr, req, res, next);
+          return middleware.onError(shopErr, req, res, next);
         }
-        return middleware.onAuth(req, params.shop, accessToken, function () {
+        return middleware.onAuth(req, params.shop, accessToken, function (err) {
+          if (err) {
+            return middleware.onError(err, req, res, next);
+          }
           return res.redirect(options.authSuccessUrl);
         });
       });

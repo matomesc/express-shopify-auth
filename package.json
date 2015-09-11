@@ -8,8 +8,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "express": "^4.13.3",
-    "request": "^2.61.0",
+    "express": "4.13.3",
+    "request": "2.61.0",
     "lru-cache": "2.6.5",
     "sinon": "1.16.1",
     "mocha": "2.3.1"
@@ -33,7 +33,9 @@
     "shopify app",
     "shopify api",
     "shopify rest api",
-    "shopify rest"
+    "shopify rest",
+    "shopify auth",
+    "shopify authentication"
   ],
   "author": "Mihai Tomescu",
   "license": "MIT",

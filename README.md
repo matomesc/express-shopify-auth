@@ -2,6 +2,8 @@
 
 Provides middleware for express applications to authenticate shops with Shopify.
 
+Shop can be dynamically set during the authentication request - check out the example below.
+
 ## Install
 
 ```

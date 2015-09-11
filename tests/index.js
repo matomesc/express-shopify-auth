@@ -31,6 +31,22 @@ function defaultOptions() {
   };
 }
 
+function uninstallApp(shop, accessToken, cb) {
+  var opts = {
+    method: 'DELETE',
+    url: 'https://' + shop + '/admin/oauth/revoke',
+    headers: {
+      'X-Shopify-Access-Token': accessToken,
+      'Accept': 'application/json'
+    }
+  };
+
+  request(opts, function (err, res, body) {
+    if (err) return cb(err);
+    return cb(null, body);
+  });
+}
+
 describe('ShopifyAuth.create() middleware', function () {
   var app;
   var server;
@@ -50,8 +66,43 @@ describe('ShopifyAuth.create() middleware', function () {
 
   afterEach(function (done) {
     server.close(function (err) {
-      done(err);
+      setTimeout(done, 1000);
     });
+  });
+
+  it('should call `onError` if `onAuth` calls back with error', function (done) {
+    var options = defaultOptions();
+    var theError = new Error('some error in onAuth()');
+    var accessToken;
+
+    options.onAuth = function (req, shop, token, done) {
+      accessToken = token;
+
+      // callback with an error
+      return done(theError);
+    };
+
+    var auth = ShopifyAuth.create(options);
+    var spy = sinon.spy(auth, 'onError');
+
+    app.use(auth);
+    app.get('/fail', function (req, res, next) {
+      res.send('Auth failed');
+
+      assert(spy.calledOnce);
+      assert(spy.args[0][0] === theError);
+      assert(spy.args[0].length === 4); // (err, req, res, next)
+
+      uninstallApp(testOptions.shop, accessToken, function (err) {
+        return done(err);
+      });
+    });
+
+    app.get('/success', function (req, res, next) {
+      assert(false);
+    });
+
+    openBrowser('http://localhost:8000/auth?shop=' + testOptions.shop);
   });
 
   it('should redirect to `authFailUrl` when signature fails integrity check', function (done) {
@@ -82,6 +133,8 @@ describe('ShopifyAuth.create() middleware', function () {
 
       assert(options.onPermission.callCount === 1);
       assert(onErrorSpy.callCount === 1);
+      assert(onErrorSpy.args[0].length === 4);
+      assert(onErrorSpy.args[0][0] instanceof Error);
       assert(options.onAuth.callCount === 0);
 
       // restore original ShopifyAuth.checkIntegrity
@@ -113,16 +166,20 @@ describe('ShopifyAuth.create() middleware', function () {
       assert(options.onError.callCount === 0);
 
       assert(options.onPermission.calledOnce);
+      assert(options.onPermission.args[0].length === 3); // (shop, redirectUrl, done)
       assert(options.onPermission.args[0][0] === testOptions.shop);
       assert(options.onPermission.args[0][1].indexOf('https://') === 0);
       assert(typeof options.onPermission.args[0][2] === 'function');
 
       assert(options.onAuth.calledOnce);
+      assert(options.onAuth.args[0].length === 4); // (req, shop, token, done)
       assert(options.onAuth.args[0][1] === testOptions.shop);
       assert(typeof options.onAuth.args[0][2] === 'string');
       assert(typeof options.onAuth.args[0][3] === 'function');
 
-      setTimeout(done, 500);
+      uninstallApp(options.onAuth.args[0][1], options.onAuth.args[0][2], function (err) {
+        return done(err);
+      });
     });
 
     openBrowser('http://localhost:8000/auth?shop=' + testOptions.shop);
@@ -131,8 +188,14 @@ describe('ShopifyAuth.create() middleware', function () {
   it('should return a valid access token when authentication is successful', function (done) {
     var options = defaultOptions();
     var data;
+    var accessToken;
 
-    options.onAuth = function (req, shop, accessToken, done_) {
+    options.onAuth = function (req, shop, token, done_) {
+      assert(shop === testOptions.shop);
+      assert(token && typeof token === 'string');
+
+      accessToken = token;
+
       var opts = {
         method: 'GET',
         url: 'https://' + shop + '/admin/shop.json',
@@ -162,7 +225,9 @@ describe('ShopifyAuth.create() middleware', function () {
       assert(data.shop.id);
       assert(data.shop.myshopify_domain === testOptions.shop);
 
-      setTimeout(done, 500);
+      uninstallApp(testOptions.shop, accessToken, function (err) {
+        return done(err);
+      });
     });
 
     openBrowser('http://localhost:8000/auth?shop=' + testOptions.shop);
