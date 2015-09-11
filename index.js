@@ -231,7 +231,7 @@ ShopifyAuth.create = function (options) {
         if (err) {
           return middleware.onError(shopErr, req, res, next);
         }
-        return middleware.onAuth(req, params.shop, accessToken, function (err) {
+        return middleware.onAuth(req, res, params.shop, accessToken, function (err) {
           if (err) {
             return middleware.onError(err, req, res, next);
           }

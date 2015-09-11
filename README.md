@@ -32,7 +32,7 @@ var auth = ShopifyAuth.create({
   shop: function (req, done) {
     return done(null, req.query.shop);
   },
-  onAuth: function (req, shop, accessToken, done) {
+  onAuth: function (req, res, shop, accessToken, done) {
     // save auth info to session
     req.session.shopify = { shop: shop, accessToken: accessToken };
     return done();

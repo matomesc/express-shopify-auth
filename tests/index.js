@@ -75,7 +75,7 @@ describe('ShopifyAuth.create() middleware', function () {
     var theError = new Error('some error in onAuth()');
     var accessToken;
 
-    options.onAuth = function (req, shop, token, done) {
+    options.onAuth = function (req, res, shop, token, done) {
       accessToken = token;
 
       // callback with an error
@@ -122,7 +122,7 @@ describe('ShopifyAuth.create() middleware', function () {
     options.onPermission.callsArg(2);
 
     options.onAuth = sinon.stub();
-    options.onAuth.callsArg(3);
+    options.onAuth.callsArg(4);
 
     var auth = ShopifyAuth.create(options);
     var onErrorSpy = sinon.spy(auth, 'onError');
@@ -153,7 +153,7 @@ describe('ShopifyAuth.create() middleware', function () {
     options.onPermission.callsArg(2);
 
     options.onAuth = sinon.stub();
-    options.onAuth.callsArg(3);
+    options.onAuth.callsArg(4);
 
     options.onError = sinon.stub();
 
@@ -172,12 +172,12 @@ describe('ShopifyAuth.create() middleware', function () {
       assert(typeof options.onPermission.args[0][2] === 'function');
 
       assert(options.onAuth.calledOnce);
-      assert(options.onAuth.args[0].length === 4); // (req, shop, token, done)
-      assert(options.onAuth.args[0][1] === testOptions.shop);
-      assert(typeof options.onAuth.args[0][2] === 'string');
-      assert(typeof options.onAuth.args[0][3] === 'function');
+      assert(options.onAuth.args[0].length === 5); // (req, res, shop, token, done)
+      assert(options.onAuth.args[0][2] === testOptions.shop);
+      assert(typeof options.onAuth.args[0][3] === 'string');
+      assert(typeof options.onAuth.args[0][4] === 'function');
 
-      uninstallApp(options.onAuth.args[0][1], options.onAuth.args[0][2], function (err) {
+      uninstallApp(options.onAuth.args[0][2], options.onAuth.args[0][3], function (err) {
         return done(err);
       });
     });
@@ -190,7 +190,7 @@ describe('ShopifyAuth.create() middleware', function () {
     var data;
     var accessToken;
 
-    options.onAuth = function (req, shop, token, done_) {
+    options.onAuth = function (req, res, shop, token, done_) {
       assert(shop === testOptions.shop);
       assert(token && typeof token === 'string');
 
