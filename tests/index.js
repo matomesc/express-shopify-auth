@@ -233,4 +233,44 @@ describe('ShopifyAuth.create() middleware', function () {
     openBrowser('http://localhost:8000/auth?shop=' + testOptions.shop);
   });
 
+  it('should redirect to `redirectUrl` when authentication is successful', function (done) {
+    var options = defaultOptions();
+    options.authCallbackPath = '/some/other/callback';
+    options.redirectUrl = 'http://localhost:8000/some/other/callback';
+
+    options.onPermission = sinon.stub();
+    options.onPermission.callsArg(2);
+
+    options.onAuth = sinon.stub();
+    options.onAuth.callsArg(4);
+
+    options.onError = sinon.stub();
+
+    var auth = ShopifyAuth.create(options);
+
+    app.use(auth);
+    app.get('/success', function (req, res) {
+      res.send('Auth success');
+
+      assert(options.onError.callCount === 0);
+
+      assert(options.onPermission.calledOnce);
+      assert(options.onPermission.args[0].length === 3); // (shop, redirectUrl, done)
+      assert(options.onPermission.args[0][0] === testOptions.shop);
+      assert(options.onPermission.args[0][1].indexOf('https://') === 0);
+      assert(typeof options.onPermission.args[0][2] === 'function');
+
+      assert(options.onAuth.calledOnce);
+      assert(options.onAuth.args[0].length === 5); // (req, res, shop, token, done)
+      assert(options.onAuth.args[0][2] === testOptions.shop);
+      assert(typeof options.onAuth.args[0][3] === 'string');
+      assert(typeof options.onAuth.args[0][4] === 'function');
+
+      uninstallApp(options.onAuth.args[0][2], options.onAuth.args[0][3], function (err) {
+        return done(err);
+      });
+    });
+
+    openBrowser('http://localhost:8000/auth?shop=' + testOptions.shop);
+  });
 });

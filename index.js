@@ -120,6 +120,9 @@ ShopifyAuth.exchangeCodeForToken = function (options, cb) {
  * @param {String}          options.authPath            Path that starts the auth process.
  * @param {String}          options.authCallbackPath    Path that Shopify will redirect shop admins after
  *                                                      granting permissions.
+ * @param {String}          [options.redirectUrl]       URL that Shopify will redirect shop admins after granting
+ *                                                      permissions. This should be the same as
+ *                                                      `url.resolve(baseUrl, authCallbackPath`.
  * @param {[String]}        options.scope               Application scope. Eg. `['read_products', 'write_products']`
  * @param {Function}        options.shop                Called with `(req, done)` and used to dynamically get
  *                                                      the shop's myshopify domain from a request. Call `done(err,
@@ -182,7 +185,9 @@ ShopifyAuth.create = function (options) {
           query: {
             client_id: options.appKey,
             scope: options.scope.join(','),
-            redirect_uri: url.resolve(options.baseUrl, options.authCallbackPath),
+            redirect_uri: options.redirectUrl ?
+              options.redirectUrl :
+              url.resolve(options.baseUrl, options.authCallbackPath),
             state: nonce
           }
         });
