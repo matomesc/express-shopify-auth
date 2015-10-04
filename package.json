@@ -1,6 +1,6 @@
 {
   "name": "express-shopify-auth",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Easily authenticate express applications with Shopify.",
   "main": "index.js",
   "private": false,
