@@ -62,7 +62,7 @@ ShopifyAuth.exchangeCodeForToken = function (options, cb) {
   };
 
   request.post(opts, function (err, res, body) {
-    if (err) return next(err);
+    if (err) return cb(err);
     if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
