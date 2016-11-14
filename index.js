@@ -137,7 +137,6 @@ ShopifyAuth.exchangeCodeForToken = function (options, cb) {
  * @param {Function}        [options.onError]           Called with `(err, req, res, next)`.
  */
 ShopifyAuth.create = function (options) {
-  var self = this;
 
   // LRU cache to store randomly generated `state` during authentication
   var cache = Cache({
@@ -232,7 +231,7 @@ ShopifyAuth.create = function (options) {
         code: params.code,
         shopDomain: params.shop
       };
-      self.exchangeCodeForToken(exchangeOptions, function (err, accessToken) {
+      ShopifyAuth.exchangeCodeForToken(exchangeOptions, function (err, accessToken) {
         if (err) {
           return middleware.onError(err, req, res, next);
         }
